@@ -1,19 +1,12 @@
-#include <ncurses/ncurses.h>
-#include <stdio.h>
-#include <math.h>
-#include <string.h>
+/*
+ * 2048_utils.c
+ * Written in C using ncurses Library
+ *
+ * Author: Cal Fisher
+ * Last Updated: 6/13/2015
+*/
 
-#include "tfe_utils.h"
-
-#define CONTAINER_WIDTH 71
-#define CONTAINER_HEIGHT 45
-#define TILE_WIDTH 16
-#define TILE_HEIGHT 10
-#define EMPTY -1
-#define LEFT 1
-#define UP 2
-#define RIGHT 3
-#define DOWN 4
+#include "2048_utils.h"
 
 //Use for general functions of the tfe program.
 //These functions include:
@@ -27,22 +20,33 @@
 
 //Maybe also have a menu file for starting the application and calling each of these files
 
-
-
+int won(int grid[4][4]) {
+	int i, j;
+	for(i = 0; i < 4; i++) {
+		for(j = 0; j < 4; j++) {
+			if(grid[i][j] == 2048) {
+				// Call winning animation
+				usleep(500000);
+				wonAnimation(grid, i, j);
+				return 1;
+			}
+		}
+	}
+	return 0;
+}
 
 void wonAnimation(int grid[4][4], int i, int j) {
 	//final coordinates:
 	//width: 24, height: 15
 	int finalX = ((1 * TILE_WIDTH) + 2 + 1 + 1 + 6);
 	int finalY = ((0 * TILE_HEIGHT) + 2 + 0 + 5);
-	
+
 	erase();
 	drawContainer(1, 1, CONTAINER_WIDTH, CONTAINER_HEIGHT);
 	updateTile(grid, i, j);
 	//drawContainer(finalX, finalY, 24, 15);
 	refresh();
 	usleep(1000000);
-	
 
 	signed int currentX = (i * TILE_WIDTH) + 2 + i + 1;
 	int currentY = (j * TILE_HEIGHT) + 2 + j;
@@ -97,8 +101,7 @@ void wonAnimation(int grid[4][4], int i, int j) {
 		if(((currentY > finalY) && (fiY == 1)) || ((currentY < finalY) && (fiY == -1))) {
 			currentY = finalY;
 		}
-		
-		
+
 		attron(COLOR_PAIR(returnColor(grid, i, j)));
 		
 		drawContainer(currentX, currentY, 24 - 8*abs(finalX - currentX)/finalX, 15 - 5*abs(finalY - currentY)/finalY);
@@ -106,9 +109,9 @@ void wonAnimation(int grid[4][4], int i, int j) {
 			mvprintw((currentY + 7), (currentX + 8), "%6d", 2048);
 		}
 		refresh();
-		
+
 		attroff(COLOR_PAIR(returnColor(grid, i, j)));
-		
+
 		refresh();
 		usleep(100000);
 	}

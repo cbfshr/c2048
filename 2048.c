@@ -1,8 +1,9 @@
 /*
- * 2048, Written in C using ncurses Library
+ * 2048.c
+ * Written in C using ncurses Library
  *
  * Author: Cal Fisher
- * Last Updated: 10/18/2014
+ * Last Updated: 6/13/2015
 */
 
 // ON WINDOWS (Unix-Like Terminal environment that can compile and run C programs. Must also support ncurses.):
@@ -35,19 +36,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
-#include "tfe_utils.h"
-
-
-#define CONTAINER_WIDTH 71
-#define CONTAINER_HEIGHT 45
-#define TILE_WIDTH 16
-#define TILE_HEIGHT 10
-#define EMPTY -1
-#define LEFT 1
-#define UP 2
-#define RIGHT 3
-#define DOWN 4
-
+#include "2048_utils.h"
 
 void init_ncurses();
 void init_grid(int grid[4][4]);
@@ -59,24 +48,9 @@ void updateTile(int grid[4][4], int a, int b);
 void updateAllTiles(int grid[4][4]);
 void moveTilesUpDown(int value, int grid[4][4], int *f, int *k, int *alreadyCombined, int *updated, int *hasMoved);
 void moveTilesLeftRight(int value, int grid[4][4], int *f, int *k, int *alreadyCombined, int *updated, int *hasMoved);
+int returnColor(int grid[4][4], int m, int n);
 
-int won(int grid[4][4]);
-
-int returnColor(int grid[4][4], int m, int n){
-	int i;
-	if (grid[m][n] > 0) {
-		for(i = 1; (log10(grid[m][n])/log10(2) != i) && (i < 15); i++);	//14:8192 is highest value with color
-	}
-	
-	if (i != 14) {
-		return i + 1;
-	}
-	
-	return 1;
-}
-
-
-int main(int argc, char* argv[]) {
+void main(int argc, char* argv[]) {
 	int a, b ,i, j, k;
 	int alreadyCombined, f;
 	int keyPressed = 0;
@@ -89,8 +63,7 @@ int main(int argc, char* argv[]) {
 	
 	int grid[4][4];
 	init_grid(grid);
-	
-	
+
 	createRandomTile(grid);
 	createRandomTile(grid);
 	do {		
@@ -105,8 +78,7 @@ int main(int argc, char* argv[]) {
 		} else if(keyPressed == KEY_DOWN) {
 			moveTilesUpDown(DOWN, grid, &f, &k, &alreadyCombined, &updated, &hasMoved);
 		}
-		
-		
+
 		//---UPDATE GRID
 		if(hasMoved) {
 			updateAllTiles(grid);
@@ -139,37 +111,22 @@ int main(int argc, char* argv[]) {
 	erase();
 	endwin();
 /*---END---*/
-	
-	return 0;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /*--------FUNCTIONS--------*/
-
 void createRandomTile(int grid[4][4]) {
 	int validPlacement = 0, xTileCoordinate = 0, yTileCoordinate = 0;
 	while(!validPlacement) {
-		xTileCoordinate = rand() % 4;	// Gets an x coordinate between 0 and 3
-		yTileCoordinate = rand() % 4;	// Gets a y coordinate between 0 and 3
-		if(grid[xTileCoordinate][yTileCoordinate] == EMPTY)	//Coordinates must be an empty tile
+		// Gets an x coordinate between 0 and 3
+		xTileCoordinate = rand() % 4;
+		// Gets a y coordinate between 0 and 3
+		yTileCoordinate = rand() % 4;
+		//Coordinates must be an empty tile
+		if(grid[xTileCoordinate][yTileCoordinate] == EMPTY) {
 			validPlacement = 1;
+		}
 	}
-	
+
 	grid[xTileCoordinate][yTileCoordinate] = ((rand() % 2) + 1) * 2;	//2 or 4
 	updateTile(grid, xTileCoordinate, yTileCoordinate);
 	refresh();
@@ -188,15 +145,15 @@ void updateTile(int grid[4][4], int m, int n) {
 	//color of the text/border will depend on the current number.
 	int c = 1;
 	int i = 14;
-	
+
 	if (grid[m][n] > 0) {
 		for(i = 1; (log10(grid[m][n])/log10(2) != i) && (i < 15); i++);	//14:8192 is highest value with color
 	}
-	
+
 	if (i != 14) {
 		c = i + 1;
 	}
-	
+
 	attron(COLOR_PAIR(c));
 	drawTile(grid, m, n);
 	attroff(COLOR_PAIR(c));
@@ -208,8 +165,9 @@ void drawTile(int grid[4][4], int i, int j) {
 	
 	drawContainer(actualXCoordinate, actualYCoordinate, TILE_WIDTH, TILE_HEIGHT);
 	
-	if(grid[i][j] > 0)
+	if(grid[i][j] > 0) {
 		mvprintw((actualYCoordinate + 5), (actualXCoordinate + 6), "%3d", grid[i][j]);
+	}
 }
 
 void drawContainer(int a, int b, int width, int height) {
@@ -281,10 +239,12 @@ void init_grid(int grid[4][4]) {
 		}
 	}
 	
-	drawContainer(1, 1, CONTAINER_WIDTH, CONTAINER_HEIGHT);	//Draws container
+	//Draws container
+	drawContainer(1, 1, CONTAINER_WIDTH, CONTAINER_HEIGHT);
 	for(i = 0; i < 4; i++) {
 		for(j = 0; j < 4; j++) {
-			drawTile(grid, i, j);	// Draws 16 tiles within container
+			// Draws 16 tiles within container
+			drawTile(grid, i, j);
 		}
 	}
 	refresh();
@@ -373,10 +333,13 @@ void moveTilesUpDown(int value, int grid[4][4], int *f, int *k, int *alreadyComb
 						grid[i][*k] = EMPTY;
 							
 						*updated = 1;
-					} else if(grid[i][(*k)-value] == grid[i][*k]) {	//Are two blocks with the same value adjacent?
+					//Are two blocks with the same value adjacent?
+					} else if(grid[i][(*k)-value] == grid[i][*k]) {
 						if(!(*alreadyCombined)) {
-							grid[i][(*k)-value] += grid[i][*k];	//assign block below/above to current block's value
-							grid[i][*k] = EMPTY;	//assign old block to EMPTY
+							//assign block below/above to current block's value
+							grid[i][(*k)-value] += grid[i][*k];
+							//assign old block to EMPTY
+							grid[i][*k] = EMPTY;
 							
 							*f = (*k)-value;
 						
@@ -390,7 +353,8 @@ void moveTilesUpDown(int value, int grid[4][4], int *f, int *k, int *alreadyComb
 					}
 				}
 				if(*updated) {
-					(*hasMoved) = 1;	//refresh the screen only when a tile has moved
+					//refresh the screen only when a tile has moved
+					(*hasMoved) = 1;
 				}
 				(*updated) = 0;
 				(*k) -= value;
@@ -400,18 +364,15 @@ void moveTilesUpDown(int value, int grid[4][4], int *f, int *k, int *alreadyComb
 	}
 }
 
-int won(int grid[4][4]) {
-	int i, j;
-	for(i = 0; i < 4; i++) {
-		for(j = 0; j < 4; j++) {
-			if(grid[i][j] == 32) {
-				// Call winning animation
-				usleep(500000);
-				wonAnimation(grid, i, j);
-				return 1;
-			}
-		}
+int returnColor(int grid[4][4], int m, int n) {
+	int i;
+	if (grid[m][n] > 0) {
+		for(i = 1; (log10(grid[m][n])/log10(2) != i) && (i < 15); i++);	//14:8192 is highest value with color
 	}
-	return 0;
+	
+	if (i != 14) {
+		return i + 1;
+	}
+	
+	return 1;
 }
-

@@ -11,16 +11,16 @@
 void updateGrid(int grid[4][4], boolean hasMoved)
 {
 	if(hasMoved)
-    {
+	{
 		updateAllTiles(grid);
-        //Places a new tile on the grid
+		//Places a new tile on the grid
 		createRandomTile(grid);
 	}
 }
 
 void createRandomTile(int grid[4][4]) {
 	boolean validPlacement = FALSE;
-    int xTileCoordinate = 0, yTileCoordinate = 0;
+	int xTileCoordinate = 0, yTileCoordinate = 0;
 	while(!validPlacement) {
 		xTileCoordinate = rand() % 4;
 		yTileCoordinate = rand() % 4;
@@ -107,21 +107,21 @@ void init_ncurses() {
 	refresh();
 	start_color();
 
-    //        #     Text Color      Background Color
-	init_pair(1,    COLOR_WHITE,    COLOR_BLACK);		//Other
-	init_pair(2,    COLOR_WHITE,    COLOR_RED);		//2
-	init_pair(3,    COLOR_WHITE,    COLOR_GREEN);		//4
-	init_pair(4,    COLOR_WHITE,    COLOR_BLUE);		//8
-	init_pair(5,    COLOR_WHITE,    COLOR_MAGENTA);	//16
-	init_pair(6,    COLOR_BLACK,    COLOR_CYAN);		//32
-	init_pair(7,    COLOR_BLACK,    COLOR_YELLOW);	//64
-	init_pair(8,    COLOR_BLACK,    COLOR_WHITE);		//128
-	init_pair(9,    COLOR_RED,      COLOR_WHITE);		//256
-	init_pair(10,   COLOR_GREEN,    COLOR_WHITE);	//512
-	init_pair(11,   COLOR_BLUE,     COLOR_WHITE);		//1024
-	init_pair(12,   COLOR_MAGENTA,  COLOR_WHITE);	//2048
-	init_pair(13,   COLOR_CYAN,     COLOR_WHITE);		//4096
-	init_pair(14,   COLOR_YELLOW,   COLOR_WHITE);	//8192
+	//		  #		Text Color		Background Color
+	init_pair(1,	COLOR_WHITE,	COLOR_BLACK);		//Other
+	init_pair(2,	COLOR_WHITE,	COLOR_RED);		//2
+	init_pair(3,	COLOR_WHITE,	COLOR_GREEN);		//4
+	init_pair(4,	COLOR_WHITE,	COLOR_BLUE);		//8
+	init_pair(5,	COLOR_WHITE,	COLOR_MAGENTA);	//16
+	init_pair(6,	COLOR_BLACK,	COLOR_CYAN);		//32
+	init_pair(7,	COLOR_BLACK,	COLOR_YELLOW);	//64
+	init_pair(8,	COLOR_BLACK,	COLOR_WHITE);		//128
+	init_pair(9,	COLOR_RED,		COLOR_WHITE);		//256
+	init_pair(10,	COLOR_GREEN,	COLOR_WHITE);	//512
+	init_pair(11,	COLOR_BLUE,		COLOR_WHITE);		//1024
+	init_pair(12,	COLOR_MAGENTA,	COLOR_WHITE);	//2048
+	init_pair(13,	COLOR_CYAN,		COLOR_WHITE);		//4096
+	init_pair(14,	COLOR_YELLOW,	COLOR_WHITE);	//8192
 }
 
 void init_grid(int grid[4][4]) {
@@ -148,7 +148,7 @@ void init_grid(int grid[4][4]) {
 //Rewrite this function to be more efficient and easier to understand
 void moveTilesLeftRight(int direction, int grid[4][4], boolean *hasMoved) {
 	boolean alreadyCombined = FALSE;
-    boolean updated = FALSE;
+	boolean updated = FALSE;
 	int i, j, f, k;
 	if (direction == LEFT) {
 		direction = 1;
@@ -159,7 +159,7 @@ void moveTilesLeftRight(int direction, int grid[4][4], boolean *hasMoved) {
 	}
 
 	for(j = 0; j < 4; j++) {
-        //These need to be reset every time for combination to work
+		//These need to be reset every time for combination to work
 		if (direction == 1) {
 			i = 1;
 			f = -1;
@@ -206,8 +206,8 @@ void moveTilesLeftRight(int direction, int grid[4][4], boolean *hasMoved) {
 //Rewrite this function to be more efficient and easier to understand
 void moveTilesUpDown(int direction, int grid[4][4], boolean *hasMoved) {
 	boolean alreadyCombined = FALSE;
-    boolean updated = FALSE;
-    int i, j, f, k;
+	boolean updated = FALSE;
+	int i, j, f, k;
 	if (direction == UP) {
 		direction = 1;
 	} else if (direction == DOWN) {
@@ -217,7 +217,7 @@ void moveTilesUpDown(int direction, int grid[4][4], boolean *hasMoved) {
 	}
 
 	for(i = 0; i < 4; i++) {
-        //These need to be reset every time for combination to work
+		//These need to be reset every time for combination to work
 		if (direction == 1) {
 			j = 1;
 			f = -1;
@@ -259,7 +259,7 @@ void moveTilesUpDown(int direction, int grid[4][4], boolean *hasMoved) {
 					*hasMoved = TRUE;
 				}
 				updated = FALSE;
-                k -= direction;
+				k -= direction;
 			}
 		}
 	}
@@ -268,9 +268,9 @@ void moveTilesUpDown(int direction, int grid[4][4], boolean *hasMoved) {
 int returnColor(int grid[4][4], int m, int n) {
 	int i;
 	if (grid[m][n] > 0) {
-        //14 (8192) is highest value with color
+		//14 (8192) is highest value with color
 		for(i = 1; (log10(grid[m][n])/log10(2) != i) && (i < 14); i++);
-        return i + 1;
+		return i + 1;
 	}
 	return 1;
 }
@@ -369,7 +369,7 @@ void wonAnimation(int grid[4][4], int i, int j) {
 		attroff(COLOR_PAIR(returnColor(grid, i, j)));
 
 		refresh();
-        usleep(100000);
+		usleep(100000);
 	}
-    mvprintw(25,35,"You won!");
+	mvprintw(25,35,"You won!");
 }

@@ -11,13 +11,13 @@
 void main(int argc, char* argv[])
 {
 	int keyPressed = 0;
-    boolean alreadyCombined;
+	boolean alreadyCombined;
 	boolean hasMoved = FALSE;
 	boolean updated = 0;
 
 	srand(time(NULL));
 
-    // Initialize ncurses, keypad (no echo), color, and color pairs
+	// Initialize ncurses, keypad (no echo), color, and color pairs
 	init_ncurses();
 
 	int grid[4][4];
@@ -37,7 +37,7 @@ void main(int argc, char* argv[])
 			moveTilesUpDown(DOWN, grid, &hasMoved);
 		}
 
-        updateGrid(grid, hasMoved);
+		updateGrid(grid, hasMoved);
 		hasMoved = FALSE;
 		refresh();
 	} while(!won(grid));
@@ -51,7 +51,7 @@ void main(int argc, char* argv[])
 		refresh();
 		exitKey = getch();
 	} while(exitKey != ENTER && exitKey != ESC);	//Enter or Escape
-    //Add functionality to return to a main menu
+	//Add functionality to return to a main menu
 
 	usleep(100000);
 	erase();

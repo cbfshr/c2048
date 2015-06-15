@@ -8,17 +8,17 @@
 
 // ON WINDOWS (Unix-Like Terminal environment that can compile and run C programs. Must also support ncurses.):
 // *NOTE: a.) Windows must be running a Unix-like command-line environment.
-//        b.) It must be able to compile and run C.
-//        c.) It must support the ncurses and Math library.
+//		  b.) It must be able to compile and run C.
+//		  c.) It must support the ncurses and Math library.
 // One such environment is Cygwin. Download it here: http://cygwin.com/install.html
 // On install, be sure to include the ncurses and math packages.
 //
 // 1. Compile in Cygwin Terminal using the following command:
 // gcc -o 2048 2048.c 2048_utils.c -lncurses
 // *Note: In some cases, you will need to link the Math library as well
-//        Cygwin normally does this automatically;
-//        however, if it does not, compile using the following command:
-//        gcc -o 2048 2048.c 2048_utils.c -lm -lncurses
+//		  Cygwin normally does this automatically;
+//		  however, if it does not, compile using the following command:
+//		  gcc -o 2048 2048.c 2048_utils.c -lm -lncurses
 // 2. Run the program using the following command:
 // ./2048
 

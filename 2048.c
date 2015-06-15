@@ -10,30 +10,33 @@
 
 void main(int argc, char* argv[])
 {
-	int keyPressed = 0;
-	boolean alreadyCombined;
+    //         HEIGHT       WIDTH
+	int grid[NUM_TILES][NUM_TILES];
+	uchar keyPressed = NULL;
+	uchar exitKey = NULL;
 	boolean hasMoved = FALSE;
-	boolean updated = 0;
 
-	srand(time(NULL));
+    srand(time(NULL));
+    init_ncurses();
 
-	// Initialize ncurses, keypad (no echo), color, and color pairs
-	init_ncurses();
-
-	int grid[4][4];
-	init_grid(grid);
-
-	createRandomTile(grid);
-	createRandomTile(grid);
-	do {
+    init_grid(grid);
+	do
+    {
 		keyPressed = getch();
-		if(keyPressed == KEY_LEFT) {
+		if(keyPressed == KEY_LEFT)
+        {
 			moveTilesLeftRight(LEFT, grid, &hasMoved);
-		} else if(keyPressed == KEY_UP) {
+		}
+        else if(keyPressed == KEY_UP)
+        {
 			moveTilesUpDown(UP, grid, &hasMoved);
-		} else if(keyPressed == KEY_RIGHT) {
+		}
+        else if(keyPressed == KEY_RIGHT)
+        {
 			moveTilesLeftRight(RIGHT, grid, &hasMoved);
-		} else if(keyPressed == KEY_DOWN) {
+		}
+        else if(keyPressed == KEY_DOWN)
+        {
 			moveTilesUpDown(DOWN, grid, &hasMoved);
 		}
 
@@ -43,18 +46,15 @@ void main(int argc, char* argv[])
 	} while(!won(grid));
 	usleep(500000);
 
-/*---END---*/
-	int exitKey = 0;
-	do {
-		mvprintw(26,17,"Press [Enter] to return to the main menu.");
-		mvprintw(27,22,"Press [Esc] to exit the game.");
-		refresh();
+	mvprintw(26,17,"Press [Enter] to return to the main menu.");
+	mvprintw(27,22,"Press [Esc] to exit the game.");
+	refresh();
+	do
+    {
 		exitKey = getch();
 	} while(exitKey != ENTER && exitKey != ESC);	//Enter or Escape
 	//Add functionality to return to a main menu
 
-	usleep(100000);
 	erase();
 	endwin();
-/*---END---*/
 }

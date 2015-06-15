@@ -8,103 +8,13 @@
 
 #include "2048.h"
 
-void updateGrid(int grid[4][4], boolean hasMoved)
+// Initialize ncurses, keypad (no echo), color, and color pairs
+void init_ncurses()
 {
-	if(hasMoved)
-	{
-		updateAllTiles(grid);
-		//Places a new tile on the grid
-		createRandomTile(grid);
-	}
-}
-
-void createRandomTile(int grid[4][4]) {
-	boolean validPlacement = FALSE;
-	int xTileCoordinate = 0, yTileCoordinate = 0;
-	while(!validPlacement) {
-		xTileCoordinate = rand() % 4;
-		yTileCoordinate = rand() % 4;
-
-		//Coordinates must be an empty tile
-		if(grid[xTileCoordinate][yTileCoordinate] == EMPTY) {
-			validPlacement = TRUE;
-		}
-	}
-
-	grid[xTileCoordinate][yTileCoordinate] = ((rand() % 2) + 1) * 2;	//2 or 4
-	updateTile(grid, xTileCoordinate, yTileCoordinate);
-	refresh();
-}
-
-void updateAllTiles(int grid[4][4]) {
-	int x, y;
-	for(x = 0; x < 4; x++) {
-		for(y = 0; y < 4; y++) {
-			updateTile(grid, x, y);
-		}
-	}
-}
-
-void updateTile(int grid[4][4], int m, int n) {
-	//color of the text/border will depend on the current number.
-	attron(COLOR_PAIR(returnColor(grid, m, n)));
-	drawTile(grid, m, n);
-	attroff(COLOR_PAIR(returnColor(grid, m, n)));
-}
-
-void drawTile(int grid[4][4], int i, int j) {
-	int actualXCoordinate = (i * TILE_WIDTH) + 2 + i + 1;
-	int actualYCoordinate = (j * TILE_HEIGHT) + 2 + j;
-
-	drawContainer(actualXCoordinate, actualYCoordinate, TILE_WIDTH, TILE_HEIGHT);
-
-	if(grid[i][j] > 0) {
-		mvprintw((actualYCoordinate + 5), (actualXCoordinate + 6), "%3d", grid[i][j]);
-	}
-}
-
-void drawContainer(int a, int b, int width, int height) {
-	int i = a;
-	int j = b;
-
-	// [ Upper Left Corner to Upper Right Corner )
-	mvaddch(j, i++, ACS_ULCORNER);
-	for( ; i < width + a; i++) {
-		mvaddch(j,i,ACS_HLINE);
-	}
-
-	// [ Upper Right Corner to Lower Right Corner )
-	mvaddch(j++, i, ACS_URCORNER);
-	for( ; j < height + b; j++) {
-		mvaddch(j, i, ACS_VLINE);
-	}
-
-	// [ Lower Right Corner to Lower Left Corner )
-	mvaddch(j, i--, ACS_LRCORNER);
-	for( ; i > a; i--) {
-		mvaddch(j, i, ACS_HLINE);
-	}
-
-	// [ Lower Left Corner to Upper Left Corner )
-	mvaddch(j--,i,ACS_LLCORNER);
-	for( ; j > b; j--) {
-		mvaddch(j,i,ACS_VLINE);
-	}
-
-	// Fill in center of tile with color
-	for(i = a + 1; i < a + width; i++) {
-		for(j = b + 1; j < b + height; j++) {
-			mvaddch(j, i, ' ');
-		}
-	}
-}
-
-void init_ncurses() {
 	initscr();
 	cbreak();
 	keypad(stdscr, true);
 	noecho();
-	refresh();
 	start_color();
 
 	//		  #		Text Color		Background Color
@@ -124,137 +34,287 @@ void init_ncurses() {
 	init_pair(14,	COLOR_YELLOW,	COLOR_WHITE);	//8192
 }
 
-void init_grid(int grid[4][4]) {
+void init_grid(int grid[NUM_TILES][NUM_TILES])
+{
 	int i, j;
 
-	for(i = 0; i < 4; i++) {
-		for(j =0; j < 4; j++) {
+	//drawContainer(1, 1, CONTAINER_WIDTH, CONTAINER_HEIGHT);
+	for(i = 0; i < NUM_TILES; i++)
+    {
+		for(j =0; j < NUM_TILES; j++)
+        {
 			grid[i][j] = EMPTY;
-		}
-	}
-
-	//Draws container
-	drawContainer(1, 1, CONTAINER_WIDTH, CONTAINER_HEIGHT);
-	for(i = 0; i < 4; i++) {
-		for(j = 0; j < 4; j++) {
-			// Draws 16 tiles within container
 			drawTile(grid, i, j);
 		}
 	}
+	createRandomTile(grid);
+	createRandomTile(grid);
 	refresh();
 }
 
+void updateGrid(int grid[NUM_TILES][NUM_TILES], boolean hasMoved)
+{
+	if(hasMoved)
+	{
+		updateAllTiles(grid);
+		//Places a new tile on the grid
+		createRandomTile(grid);
+	}
+}
+
+void createRandomTile(int grid[NUM_TILES][NUM_TILES])
+{
+	boolean validPlacement = FALSE;
+	int xTileCoordinate = 0, yTileCoordinate = 0;
+	while(!validPlacement)
+    {
+		xTileCoordinate = rand() % NUM_TILES;
+		yTileCoordinate = rand() % NUM_TILES;
+
+		//Coordinates must be an empty tile
+		if(grid[xTileCoordinate][yTileCoordinate] == EMPTY)
+        {
+			validPlacement = TRUE;
+		}
+	}
+
+	grid[xTileCoordinate][yTileCoordinate] = ((rand() % 2) + 1) * 2;	//2 or 4
+	updateTile(grid, xTileCoordinate, yTileCoordinate);
+}
+
+void updateAllTiles(int grid[NUM_TILES][NUM_TILES])
+{
+	int x, y;
+	for(y = 0; y < NUM_TILES; y++)
+    {
+		for(x = 0; x < NUM_TILES; x++)
+        {
+			updateTile(grid, x, y);
+            //refresh();
+            //usleep(500000);
+		}
+	}
+}
+
+void updateTile(int grid[NUM_TILES][NUM_TILES], int m, int n)
+{
+	//color of the text/border will depend on the current number.
+	attron(COLOR_PAIR(returnColor(grid, m, n)));
+	drawTile(grid, m, n);
+	attroff(COLOR_PAIR(returnColor(grid, m, n)));
+}
+
+void drawTile(int grid[NUM_TILES][NUM_TILES], int i, int j)
+{
+	int actualXCoordinate = (i * TILE_WIDTH) + 2 + i + 1;
+	int actualYCoordinate = (j * TILE_HEIGHT) + 2 + j;
+
+	drawContainer(actualXCoordinate, actualYCoordinate, TILE_WIDTH, TILE_HEIGHT);
+
+	if(grid[i][j] > 0)
+    {
+		mvprintw((actualYCoordinate + 5), (actualXCoordinate + 6), "%3d", grid[i][j]);
+	}
+}
+
+void drawContainer(int a, int b, int width, int height)
+{
+	int i = a;
+	int j = b;
+
+	// [ Upper Left Corner to Upper Right Corner )
+	mvaddch(j, i++, ACS_ULCORNER);
+	for( ; i < width + a; i++)
+    {
+		mvaddch(j,i,ACS_HLINE);
+	}
+
+	// [ Upper Right Corner to Lower Right Corner )
+	mvaddch(j++, i, ACS_URCORNER);
+	for( ; j < height + b; j++)
+    {
+		mvaddch(j, i, ACS_VLINE);
+	}
+
+	// [ Lower Right Corner to Lower Left Corner )
+	mvaddch(j, i--, ACS_LRCORNER);
+	for( ; i > a; i--)
+    {
+		mvaddch(j, i, ACS_HLINE);
+	}
+
+	// [ Lower Left Corner to Upper Left Corner )
+	mvaddch(j--,i,ACS_LLCORNER);
+	for( ; j > b; j--)
+    {
+		mvaddch(j,i,ACS_VLINE);
+	}
+
+	// Fill in center of tile with color
+	for(i = a + 1; i < a + width; i++)
+    {
+		for(j = b + 1; j < b + height; j++)
+        {
+			mvaddch(j, i, ' ');
+		}
+	}
+}
+
+//Possible Bug: If there are two sets of numbers in a row/col that can be combined, will they?
+//i.e. [2][2][4][4] should turn into [-][-][4][8], but is [-][-][2][8]
 //Find some way to combine Left/Right and Up/Down moveTiles logic
 //Rewrite this function to be more efficient and easier to understand
-void moveTilesLeftRight(int direction, int grid[4][4], boolean *hasMoved) {
+void moveTilesLeftRight(int direction, int grid[NUM_TILES][NUM_TILES], boolean *hasMoved)
+{
 	boolean alreadyCombined = FALSE;
 	boolean updated = FALSE;
 	int i, j, f, k;
-	if (direction == LEFT) {
+	if (direction == LEFT)
+    {
 		direction = 1;
-	} else if (direction == RIGHT) {
+	}
+    else if (direction == RIGHT)
+    {
 		direction = -1;
-	} else {
+	}
+    else {
 		return;
 	}
 
-	for(j = 0; j < 4; j++) {
+	for(j = 0; j < NUM_TILES; j++)
+    {
 		//These need to be reset every time for combination to work
-		if (direction == 1) {
+		if (direction == 1)
+        {
 			i = 1;
 			f = -1;
-		} else if (direction == -1) {
+		}
+        else if (direction == -1)
+        {
 			i = 2;
-			f = 4;
+            //f = 4;
+			f = NUM_TILES;
 		}
 
-		for( ; (direction == -1 && (i > -1)) || (direction == 1 && (i < 4)); i += direction) {
+		for( ; (direction == -1 && (i > -1)) || (direction == 1 && (i < NUM_TILES)); i += direction)
+        {
 			k = i;
-			while(((direction == 1) && (k > (f + direction))) || ((direction == -1) && (k < (f + direction)))) {
-				if(grid[k][j] > 0) {
-					if(grid[k-direction][j] == EMPTY) {
-						grid[k-direction][j] = grid[k][j];
+			while(((direction == 1) && (k > (f + direction))) || ((direction == -1) && (k < (f + direction))))
+            {
+				if(grid[k][j] > 0)
+                {
+					if(grid[k - direction][j] == EMPTY)
+                    {
+						grid[k - direction][j] = grid[k][j];
 						grid[k][j] = EMPTY;
 
 						updated = TRUE;
-					} else if(grid[k-direction][j] == grid[k][j]) {
-						if(!alreadyCombined) {
-							grid[(k)-direction][j] += grid[k][j];
+					}
+                    else if(grid[k - direction][j] == grid[k][j])
+                    {
+						if(!alreadyCombined)
+                        {
+							grid[k - direction][j] += grid[k][j];
 							grid[k][j] = EMPTY;
 
 							f = k - direction;
 
 							alreadyCombined = TRUE;
-						} else {
-							grid[k-direction][j] += grid[k][j];
+						}
+                        else
+                        {
+							grid[k - direction][j] << 1;
 							grid[k][j] = EMPTY;
 						}
 
 						updated = TRUE;
 					}
 				}
-				if(updated) {
+				if(updated)
+                {
 					*hasMoved = TRUE;
 				}
 				updated = FALSE;
 				k -= direction;
 			}
 		}
+        alreadyCombined = FALSE;
 	}
 }
 
 //Rewrite this function to be more efficient and easier to understand
-void moveTilesUpDown(int direction, int grid[4][4], boolean *hasMoved) {
+void moveTilesUpDown(int direction, int grid[NUM_TILES][NUM_TILES], boolean *hasMoved)
+{
 	boolean alreadyCombined = FALSE;
 	boolean updated = FALSE;
 	int i, j, f, k;
-	if (direction == UP) {
+	if (direction == UP)
+    {
 		direction = 1;
-	} else if (direction == DOWN) {
+	}
+    else if (direction == DOWN)
+    {
 		direction = -1;
-	} else {
+	}
+    else
+    {
 		return;
 	}
 
-	for(i = 0; i < 4; i++) {
+	for(i = 0; i < NUM_TILES; i++)
+    {
 		//These need to be reset every time for combination to work
-		if (direction == 1) {
+		if (direction == 1)
+        {
 			j = 1;
 			f = -1;
-		} else if (direction == -1) {
+		}
+        else if (direction == -1)
+        {
 			j = 2;
-			f = 4;
+			//f = 4;
+            f = NUM_TILES;
 		}
 
-		for( ; (direction == -1 && (j > -1)) || (direction == 1 && (j < 4)); j += direction) {
+		for( ; (direction == -1 && (j > -1)) || (direction == 1 && (j < NUM_TILES)); j += direction)
+        {
 			k = j;
-			while((direction == 1 && ((k) > (f) + direction)) || (direction == -1 && (k < (f + direction)))) {
-				if(grid[i][k] > 0) {	//This block has a direction, else ignore
-					if(grid[i][k-direction] == EMPTY) {
-						grid[i][k-direction] = grid[i][k];
+			while((direction == 1 && (k > (f + direction))) || (direction == -1 && (k < (f + direction))))
+            {
+				if(grid[i][k] > 0)
+                {
+                    //This block has a direction, else ignore
+					if(grid[i][k - direction] == EMPTY)
+                    {
+						grid[i][k - direction] = grid[i][k];
 						grid[i][k] = EMPTY;
 
 						updated = TRUE;
-					//Are two blocks with the same direction adjacent?
-					} else if(grid[i][k-direction] == grid[i][k]) {
-						if(!alreadyCombined) {
+					}
+                    //Are two blocks with the same direction adjacent?
+                    else if(grid[i][k - direction] == grid[i][k])
+                    {
+						if(!alreadyCombined)
+                        {
 							//assign block below/above to current block's direction
-							grid[i][k-direction] += grid[i][k];
+							grid[i][k - direction] += grid[i][k];
 							//assign old block to EMPTY
 							grid[i][k] = EMPTY;
 
 							f = k - direction;
 
 							alreadyCombined = TRUE;
-						} else {
-							grid[i][k-direction] += grid[i][k];
+						}
+                        else
+                        {
+							grid[i][k - direction] << 1;
 							grid[i][k] = EMPTY;
 						}
-
 						updated = TRUE;
 					}
 				}
-				if(updated) {
+				if(updated)
+                {
 					//refresh the screen only when a tile has moved
 					*hasMoved = TRUE;
 				}
@@ -262,36 +322,37 @@ void moveTilesUpDown(int direction, int grid[4][4], boolean *hasMoved) {
 				k -= direction;
 			}
 		}
+        alreadyCombined = FALSE;
 	}
 }
 
-int returnColor(int grid[4][4], int m, int n) {
-	int i;
-	if (grid[m][n] > 0) {
-		//14 (8192) is highest value with color
-		for(i = 1; (log10(grid[m][n])/log10(2) != i) && (i < 14); i++);
-		return i + 1;
-	}
-	return 1;
+int returnColor(int grid[NUM_TILES][NUM_TILES], int m, int n)
+{
+    return log10(grid[m][n])/log10(2) + 1;
 }
 
 //Maybe also have a menu file for starting the application and calling each of these files
-int won(int grid[4][4]) {
+boolean won(int grid[NUM_TILES][NUM_TILES])
+{
 	int i, j;
-	for(i = 0; i < 4; i++) {
-		for(j = 0; j < 4; j++) {
-			if(grid[i][j] == 2048) {
+	for(i = 0; i < NUM_TILES; i++)
+    {
+		for(j = 0; j < NUM_TILES; j++)
+        {
+			if(grid[i][j] == 32)
+            {
 				// Call winning animation
 				usleep(500000);
 				wonAnimation(grid, i, j);
-				return 1;
+				return TRUE;
 			}
 		}
 	}
-	return 0;
+	return FALSE;
 }
 
-void wonAnimation(int grid[4][4], int i, int j) {
+void wonAnimation(int grid[NUM_TILES][NUM_TILES], int i, int j)
+{
 	//final coordinates:
 	//width: 24, height: 15
 	int finalX = ((1 * TILE_WIDTH) + 2 + 1 + 1 + 6);
@@ -300,7 +361,6 @@ void wonAnimation(int grid[4][4], int i, int j) {
 	erase();
 	drawContainer(1, 1, CONTAINER_WIDTH, CONTAINER_HEIGHT);
 	updateTile(grid, i, j);
-	//drawContainer(finalX, finalY, 24, 15);
 	refresh();
 	usleep(1000000);
 
@@ -310,61 +370,82 @@ void wonAnimation(int grid[4][4], int i, int j) {
 	int fiX = 0;
 	int fiY = 0;
 
-	if(finalX > currentX) {
+	if(finalX > currentX)
+    {
 		fiX = 1;
-	} else {
+	}
+    else
+    {
 		fiX = -1;
 	}
 
-	if(finalY > currentY) {
+	if(finalY > currentY)
+    {
 		fiY = 1;
 	} else {
 		fiY = -1;
 	}
 
-	while(currentX != finalX || currentY != finalY) {
+	while(currentX != finalX || currentY != finalY)
+    {
 		erase();
 		drawContainer(1, 1, CONTAINER_WIDTH, CONTAINER_HEIGHT);
 		drawContainer(finalX, finalY, 24, 15);
 
-		if(abs(finalX - currentX) > abs(finalY - currentY)) {
-			if(currentX != finalX) {
-				if(currentY != finalY) {
+		if(abs(finalX - currentX) > abs(finalY - currentY))
+        {
+			if(currentX != finalX)
+            {
+				if(currentY != finalY)
+                {
 					currentX += fiX*(abs(finalX - currentX) / abs(finalY - currentY));
-				} else {
+				}
+                else
+                {
 					currentX += fiX;
 				}
 			}
-			if(currentY != finalY) {
+			if(currentY != finalY)
+            {
 				currentY += fiY;
 			}
-		} else {
-			if(currentX != finalX) {
+		}
+        else
+        {
+			if(currentX != finalX)
+            {
 				currentX += fiX;
 			}
-			if(currentY != finalY) {
-				if(currentY != finalY) {
+			if(currentY != finalY)
+            {
+				if(currentY != finalY)
+                {
 					currentY += fiY*(abs(finalY - currentY) / abs(finalX - currentX));
-				} else {
+				}
+                else
+                {
 					currentY += fiY;
 				}
 			}
 		}
 
-		if(((currentX > finalX) && (fiX == 1)) || ((currentX < finalX) && (fiX == -1))) {
+		if(((currentX > finalX) && (fiX == 1)) || ((currentX < finalX) && (fiX == -1)))
+        {
 			currentX = finalX;
 		}
-		if(((currentY > finalY) && (fiY == 1)) || ((currentY < finalY) && (fiY == -1))) {
+		if(((currentY > finalY) && (fiY == 1)) || ((currentY < finalY) && (fiY == -1)))
+        {
 			currentY = finalY;
 		}
 
 		attron(COLOR_PAIR(returnColor(grid, i, j)));
 
 		drawContainer(currentX, currentY, 24 - 8*abs(finalX - currentX)/finalX, 15 - 5*abs(finalY - currentY)/finalY);
-		if(grid[i][j] > 0) {
+		if(grid[i][j] > 0)
+        {
 			mvprintw((currentY + 7), (currentX + 8), "%6d", 2048);
 		}
-		refresh();
+		//refresh();
 
 		attroff(COLOR_PAIR(returnColor(grid, i, j)));
 

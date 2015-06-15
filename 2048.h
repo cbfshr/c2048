@@ -42,12 +42,17 @@
 #define TRUE 1
 #define FALSE 0
 #define ENTER 10
-#define ESC 17
+#define ESC 27
 
 #define CONTAINER_WIDTH 71
 #define CONTAINER_HEIGHT 45
 #define TILE_WIDTH 16
 #define TILE_HEIGHT 10
+
+//For now, assume it must be a square
+#define NUM_TILES 3
+#define NUM_TILES_WIDTH 4
+#define NUM_TILES_HEIGHT 4
 
 #define EMPTY -1
 #define LEFT 1
@@ -57,17 +62,17 @@
 
 
 void init_ncurses();
-void init_grid(int grid[4][4]);
-int returnColor(int grid[4][4], int m, int n);
+void init_grid(int grid[NUM_TILES][NUM_TILES]);
+int returnColor(int grid[NUM_TILES][NUM_TILES], int m, int n);
 
-void createRandomTile(int grid[4][4]);
-void drawTile(int grid[4][4], int i, int j);
+void createRandomTile(int grid[NUM_TILES][NUM_TILES]);
+void drawTile(int grid[NUM_TILES][NUM_TILES], int i, int j);
 void drawContainer(int a, int b, int width, int height);
-void updateGrid(int grid[4][4], boolean hasMoved);
-void updateTile(int grid[4][4], int a, int b);
-void updateAllTiles(int grid[4][4]);
-void moveTilesUpDown(int value, int grid[4][4], boolean *hasMoved);
-void moveTilesLeftRight(int value, int grid[4][4], boolean *hasMoved);
+void updateGrid(int grid[NUM_TILES][NUM_TILES], boolean hasMoved);
+void updateTile(int grid[NUM_TILES][NUM_TILES], int a, int b);
+void updateAllTiles(int grid[NUM_TILES][NUM_TILES]);
+void moveTilesUpDown(int value, int grid[NUM_TILES][NUM_TILES], boolean *hasMoved);
+void moveTilesLeftRight(int value, int grid[NUM_TILES][NUM_TILES], boolean *hasMoved);
 
-int won(int grid[4][4]);
-void wonAnimation(int grid[4][4], int i, int j);
+boolean won(int grid[NUM_TILES][NUM_TILES]);
+void wonAnimation(int grid[NUM_TILES][NUM_TILES], int i, int j);

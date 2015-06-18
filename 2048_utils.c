@@ -338,10 +338,13 @@ boolean won(int grid[NUM_TILES][NUM_TILES])
 	for(i = 0; i < NUM_TILES; i++)
 	{
 		for(j = 0; j < NUM_TILES; j++)
+
 		{
 			if(grid[i][j] == 32)
 			{
+				// Call winning animation
 				usleep(500000);
+                wonAnimation(grid, i, j);
 				return TRUE;
 			}
 		}
@@ -349,18 +352,102 @@ boolean won(int grid[NUM_TILES][NUM_TILES])
 	return FALSE;
 }
 
-boolean lost(int grid[NUM_TILES][NUM_TILES])
+//Clean up the coordinates. Possibly create functions to assist
+// with the messy system.
+void wonAnimation(int grid[NUM_TILES][NUM_TILES], int i, int j)
 {
-	int i, j;
-	for(i = 0; i < NUM_TILES; i++)
-	{
-		for(j = 0; j < NUM_TILES; j++)
-		{
-			if(grid[i][j] == -1)
-			{
-				return FALSE;
+	//final coordinates:
+	//width: 24, height: 15
+	//int finalX = ((1 * TILE_WIDTH) + 2 + 1 + 1 + 6); //26
+	//int finalY = ((0 * TILE_HEIGHT) + 2 + 0 + 5); //7
+	int finalX = (CONTAINER_WIDTH - WON_TILE_WIDTH) / 2;
+	int finalY = (CONTAINER_HEIGHT - WON_TILE_HEIGHT) / 3;
+
+	erase();
+	drawContainer(1, 1, CONTAINER_WIDTH, CONTAINER_HEIGHT);
+	updateTile(grid, i, j);
+	refresh();
+	usleep(1000000);
+
+	signed int currentX = (i * TILE_WIDTH) + 2 + i + 1;
+	int currentY = (j * TILE_HEIGHT) + 2 + j;
+
+	int fiX = -1;
+	int fiY = -1;
+
+	if(finalX > currentX)
+    {
+		fiX = 1;
+	}
+
+	if(finalY > currentY)
+    {
+		fiY = 1;
+	}
+
+	while(currentX != finalX || currentY != finalY)
+    {
+		erase();
+		drawContainer(1, 1, CONTAINER_WIDTH, CONTAINER_HEIGHT);
+		drawContainer(finalX, finalY, WON_TILE_WIDTH, WON_TILE_HEIGHT);
+
+		if(abs(finalX - currentX) > abs(finalY - currentY))
+        {
+			if(currentX != finalX)
+            {
+				if(currentY != finalY)
+                {
+					currentX += fiX*(abs(finalX - currentX) / abs(finalY - currentY));
+				}
+                else
+                {
+					currentX += fiX;
+				}
+			}
+			if(currentY != finalY)
+            {
+				currentY += fiY;
 			}
 		}
+        else
+        {
+			if(currentX != finalX)
+            {
+				currentX += fiX;
+			}
+			if(currentY != finalY)
+            {
+				if(currentY != finalY)
+                {
+					currentY += fiY*(abs(finalY - currentY) / abs(finalX - currentX));
+				}
+                else
+                {
+					currentY += fiY;
+				}
+			}
+		}
+
+		if(((currentX > finalX) && (fiX == 1)) || ((currentX < finalX) && (fiX == -1)))
+        {
+			currentX = finalX;
+		}
+		if(((currentY > finalY) && (fiY == 1)) || ((currentY < finalY) && (fiY == -1)))
+        {
+			currentY = finalY;
+		}
+
+		attron(COLOR_PAIR(returnColor(grid, i, j)));
+
+		drawContainer(currentX, currentY, WON_TILE_WIDTH - (WON_TILE_WIDTH / 3)*abs(finalX - currentX)/finalX, WON_TILE_HEIGHT - (WON_TILE_HEIGHT / 3)*abs(finalY - currentY)/finalY);
+		if(grid[i][j] > 0)
+        {
+			mvprintw((currentY + 7), (currentX + 8), "%6d", 2048);
+		}
+
+		attroff(COLOR_PAIR(returnColor(grid, i, j)));
+
+		refresh();
+		usleep(100000);
 	}
-	return TRUE;
 }

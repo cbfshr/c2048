@@ -14,7 +14,7 @@ void main(int argc, char* argv[])
 	int grid[NUM_TILES][NUM_TILES];
 	uchar keyPressed = NULL;
 	boolean hasMoved = FALSE;
-	
+
 	srand(time(NULL));
 	init_ncurses();
 
@@ -45,10 +45,8 @@ void main(int argc, char* argv[])
 	} while(!won(grid));
 	usleep(500000);
 
-	erase();
-	mvprintw(0, 0, "You won!");
-	//mvprintw(26, 17, "Press [Enter] to return to the main menu.");
-	mvprintw(1, 0, "Press [Esc] to exit the game.");
+	mvprintw(28,17,"Press [Enter] to return to the main menu.");
+	mvprintw(29,22,"Press [Esc] to exit the game.");
 	refresh();
 	do
 	{

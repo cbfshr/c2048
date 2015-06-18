@@ -1,2 +1,6 @@
 *.exe
+<<<<<<< HEAD
 *.stackdump
+=======
+*.stackdump
+>>>>>>> 7201e6dfe2d5c019e0aa731154b2876e9ea0e4df

@@ -38,7 +38,7 @@ void init_grid(int grid[NUM_TILES][NUM_TILES])
 {
 	int i, j;
 
-	drawContainer(1, 1, CONTAINER_WIDTH, CONTAINER_HEIGHT);
+	drawContainer(0, 0, CONTAINER_WIDTH, CONTAINER_HEIGHT);
 	for(i = 0; i < NUM_TILES; i++)
 	{
 		for(j =0; j < NUM_TILES; j++)
@@ -106,8 +106,8 @@ void updateTile(int grid[NUM_TILES][NUM_TILES], int m, int n)
 
 void drawTile(int grid[NUM_TILES][NUM_TILES], int i, int j)
 {
-	int actualXCoordinate = (i * TILE_WIDTH) + 2 + i + 1;
-	int actualYCoordinate = (j * TILE_HEIGHT) + 2 + j;
+	int actualXCoordinate = (i * TILE_WIDTH) + 2;
+	int actualYCoordinate = (j * TILE_HEIGHT) + 1;
 
 	drawContainer(actualXCoordinate, actualYCoordinate, TILE_WIDTH, TILE_HEIGHT);
 
@@ -124,14 +124,14 @@ void drawContainer(int a, int b, int width, int height)
 
 	// [ Upper Left Corner to Upper Right Corner )
 	mvaddch(j, i++, ACS_ULCORNER);
-	for( ; i < width + a; i++)
+	for( ; i < width + a - 1; i++)
 	{
 		mvaddch(j,i,ACS_HLINE);
 	}
 
 	// [ Upper Right Corner to Lower Right Corner )
 	mvaddch(j++, i, ACS_URCORNER);
-	for( ; j < height + b; j++)
+	for( ; j < height + b - 1; j++)
 	{
 		mvaddch(j, i, ACS_VLINE);
 	}
@@ -151,9 +151,9 @@ void drawContainer(int a, int b, int width, int height)
 	}
 
 	// Fill in center of tile with color
-	for(i = a + 1; i < a + width; i++)
+	for(i = a + 1; i < a + width - 1; i++)
 	{
-		for(j = b + 1; j < b + height; j++)
+		for(j = b + 1; j < b + height - 1; j++)
 		{
 			mvaddch(j, i, ' ');
 		}
@@ -364,7 +364,7 @@ void wonAnimation(int grid[NUM_TILES][NUM_TILES], int i, int j)
 	int finalY = (CONTAINER_HEIGHT - WON_TILE_HEIGHT) / 3;
 
 	erase();
-	drawContainer(1, 1, CONTAINER_WIDTH, CONTAINER_HEIGHT);
+	drawContainer(0, 0, CONTAINER_WIDTH, CONTAINER_HEIGHT);
 	updateTile(grid, i, j);
 	refresh();
 	usleep(1000000);
@@ -388,7 +388,7 @@ void wonAnimation(int grid[NUM_TILES][NUM_TILES], int i, int j)
 	while(currentX != finalX || currentY != finalY)
     {
 		erase();
-		drawContainer(1, 1, CONTAINER_WIDTH, CONTAINER_HEIGHT);
+		drawContainer(0, 0, CONTAINER_WIDTH, CONTAINER_HEIGHT);
 		drawContainer(finalX, finalY, WON_TILE_WIDTH, WON_TILE_HEIGHT);
 
 		if(abs(finalX - currentX) > abs(finalY - currentY))

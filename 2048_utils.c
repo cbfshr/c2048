@@ -38,7 +38,7 @@ void init_grid(int grid[NUM_TILES][NUM_TILES])
 {
 	int i, j;
 
-	//drawContainer(1, 1, CONTAINER_WIDTH, CONTAINER_HEIGHT);
+	drawContainer(1, 1, CONTAINER_WIDTH, CONTAINER_HEIGHT);
 	for(i = 0; i < NUM_TILES; i++)
     {
 		for(j =0; j < NUM_TILES; j++)
@@ -339,7 +339,7 @@ boolean won(int grid[NUM_TILES][NUM_TILES])
     {
 		for(j = 0; j < NUM_TILES; j++)
         {
-			if(grid[i][j] == 32)
+			if(grid[i][j] == 2048)
             {
 				// Call winning animation
 				usleep(500000);
@@ -351,13 +351,17 @@ boolean won(int grid[NUM_TILES][NUM_TILES])
 	return FALSE;
 }
 
+//Clean up the coordinates. Possibly create functions to assist
+// with the messy system.
 void wonAnimation(int grid[NUM_TILES][NUM_TILES], int i, int j)
 {
 	//final coordinates:
 	//width: 24, height: 15
-	int finalX = ((1 * TILE_WIDTH) + 2 + 1 + 1 + 6);
-	int finalY = ((0 * TILE_HEIGHT) + 2 + 0 + 5);
-
+	//int finalX = ((1 * TILE_WIDTH) + 2 + 1 + 1 + 6); //26
+	//int finalY = ((0 * TILE_HEIGHT) + 2 + 0 + 5); //7
+	int finalX = (CONTAINER_WIDTH - WON_TILE_WIDTH) / 2;
+	int finalY = (CONTAINER_HEIGHT - WON_TILE_HEIGHT) / 3;
+	
 	erase();
 	drawContainer(1, 1, CONTAINER_WIDTH, CONTAINER_HEIGHT);
 	updateTile(grid, i, j);
@@ -367,30 +371,24 @@ void wonAnimation(int grid[NUM_TILES][NUM_TILES], int i, int j)
 	signed int currentX = (i * TILE_WIDTH) + 2 + i + 1;
 	int currentY = (j * TILE_HEIGHT) + 2 + j;
 
-	int fiX = 0;
-	int fiY = 0;
+	int fiX = -1;
+	int fiY = -1;
 
 	if(finalX > currentX)
     {
 		fiX = 1;
 	}
-    else
-    {
-		fiX = -1;
-	}
 
 	if(finalY > currentY)
     {
 		fiY = 1;
-	} else {
-		fiY = -1;
 	}
 
 	while(currentX != finalX || currentY != finalY)
     {
 		erase();
 		drawContainer(1, 1, CONTAINER_WIDTH, CONTAINER_HEIGHT);
-		drawContainer(finalX, finalY, 24, 15);
+		drawContainer(finalX, finalY, WON_TILE_WIDTH, WON_TILE_HEIGHT);
 
 		if(abs(finalX - currentX) > abs(finalY - currentY))
         {
@@ -440,12 +438,11 @@ void wonAnimation(int grid[NUM_TILES][NUM_TILES], int i, int j)
 
 		attron(COLOR_PAIR(returnColor(grid, i, j)));
 
-		drawContainer(currentX, currentY, 24 - 8*abs(finalX - currentX)/finalX, 15 - 5*abs(finalY - currentY)/finalY);
+		drawContainer(currentX, currentY, WON_TILE_WIDTH - (WON_TILE_WIDTH / 3)*abs(finalX - currentX)/finalX, WON_TILE_HEIGHT - (WON_TILE_HEIGHT / 3)*abs(finalY - currentY)/finalY);
 		if(grid[i][j] > 0)
         {
 			mvprintw((currentY + 7), (currentX + 8), "%6d", 2048);
 		}
-		//refresh();
 
 		attroff(COLOR_PAIR(returnColor(grid, i, j)));
 

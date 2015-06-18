@@ -46,8 +46,8 @@ void main(int argc, char* argv[])
 	} while(!won(grid));
 	usleep(500000);
 
-	mvprintw(26,17,"Press [Enter] to return to the main menu.");
-	mvprintw(27,22,"Press [Esc] to exit the game.");
+	mvprintw(28,17,"Press [Enter] to return to the main menu.");
+	mvprintw(29,22,"Press [Esc] to exit the game.");
 	refresh();
 	do
     {

@@ -44,15 +44,13 @@
 #define ENTER 10
 #define ESC 27
 
-#define CONTAINER_WIDTH 71
-#define CONTAINER_HEIGHT 45
+//For now, assume it must be a square
+#define NUM_TILES 4
 #define TILE_WIDTH 16
 #define TILE_HEIGHT 10
-
-//For now, assume it must be a square
-#define NUM_TILES 3
-#define NUM_TILES_WIDTH 4
-#define NUM_TILES_HEIGHT 4
+//No idea how the math works out...
+#define CONTAINER_WIDTH (NUM_TILES*TILE_WIDTH)+NUM_TILES+3
+#define CONTAINER_HEIGHT (NUM_TILES*TILE_HEIGHT)+NUM_TILES+1
 
 #define EMPTY -1
 #define LEFT 1
@@ -75,4 +73,4 @@ void moveTilesUpDown(int value, int grid[NUM_TILES][NUM_TILES], boolean *hasMove
 void moveTilesLeftRight(int value, int grid[NUM_TILES][NUM_TILES], boolean *hasMoved);
 
 boolean won(int grid[NUM_TILES][NUM_TILES]);
-void wonAnimation(int grid[NUM_TILES][NUM_TILES], int i, int j);
+boolean lost(int grid[NUM_TILES][NUM_TILES]);

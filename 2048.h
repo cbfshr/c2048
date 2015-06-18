@@ -45,12 +45,12 @@
 #define ESC 27
 
 //For now, assume it must be a square
-#define NUM_TILES 4
+#define NUM_TILES 3
 #define TILE_WIDTH 16
 #define TILE_HEIGHT 10
 //No idea how the math works out...
-#define CONTAINER_WIDTH (NUM_TILES*TILE_WIDTH)+NUM_TILES+3
-#define CONTAINER_HEIGHT (NUM_TILES*TILE_HEIGHT)+NUM_TILES+1
+#define CONTAINER_WIDTH (NUM_TILES*TILE_WIDTH)+4
+#define CONTAINER_HEIGHT (NUM_TILES*TILE_HEIGHT)+2
 
 #define EMPTY -1
 #define LEFT 1

@@ -6,36 +6,17 @@
  * Last Updated: 6/15/2015
 */
 
-// ON WINDOWS (Unix-Like Terminal environment that can compile and run C programs. Must also support ncurses.):
-// *NOTE: a.) Windows must be running a Unix-like command-line environment.
-//		  b.) It must be able to compile and run C.
-//		  c.) It must support the ncurses and Math library.
-// One such environment is Cygwin. Download it here: http://cygwin.com/install.html
-// On install, be sure to include the ncurses and math packages.
-//
-// 1. Compile in Cygwin Terminal using the following command:
-// gcc -o 2048 2048.c 2048_utils.c -lncurses
-// *Note: In some cases, you will need to link the Math library as well
-//		  Cygwin normally does this automatically;
-//		  however, if it does not, compile using the following command:
-//		  gcc -o 2048 2048.c 2048_utils.c -lm -lncurses
-// 2. Run the program using the following command:
-// ./2048
+// Windows
+// #include <ncurses/ncurses.h>
+// MacOS
+#include <curses.h>
 
-// ON MAC OS X:
-// 1. Comment out this line:
-#include <ncurses/ncurses.h>
-// 2. Uncomment this line:
-//#include <curses.h>
-// 3. Compile in Terminal using the following command:
-// gcc -o 2048 2048.c 2048_utils.cc -lcurses
-// 4. Run the program using the following command:
-// ./2048
-
+// #define _XOPEN_SOURCE 500
 #include <stdio.h>
-#include <math.h>
+#include <stdlib.h>
 #include <string.h>
-
+#include <math.h>
+#include <time.h>
 
 #define uchar int
 #define boolean int
@@ -45,19 +26,18 @@
 #define ESC 27
 
 //For now, assume it must be a square
-#define NUM_TILES 3
+#define NUM_TILES 4
 #define TILE_WIDTH 16
 #define TILE_HEIGHT 10
-//No idea how the math works out...
 #define CONTAINER_WIDTH (NUM_TILES*TILE_WIDTH)+4
 #define CONTAINER_HEIGHT (NUM_TILES*TILE_HEIGHT)+2
+#define WIN_NUMBER 2048
 
 #define EMPTY -1
 #define LEFT 1
 #define UP 2
 #define RIGHT 3
 #define DOWN 4
-
 
 void init_ncurses();
 void init_grid(int grid[NUM_TILES][NUM_TILES]);

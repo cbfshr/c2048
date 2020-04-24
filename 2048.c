@@ -8,7 +8,7 @@
 
 #include "2048.h"
 
-void main(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
 	//		   HEIGHT	  WIDTH
 	int grid[NUM_TILES][NUM_TILES];

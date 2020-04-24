@@ -339,7 +339,7 @@ boolean won(int grid[NUM_TILES][NUM_TILES])
 	{
 		for(j = 0; j < NUM_TILES; j++)
 		{
-			if(grid[i][j] == 32)
+			if(grid[i][j] == WIN_NUMBER)
 			{
 				usleep(500000);
 				return TRUE;
